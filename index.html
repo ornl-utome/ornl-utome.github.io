@@ -4,40 +4,170 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>UtoMe: Observation-Uncertainty-Guided Token Merging for Weather Foundation Models</title>
-  <meta name="description" content="UtoMe: Observation-Uncertainty-Guided Token Merging for Weather Foundation Models. Paper and code will be released soon.">
+  <meta name="description" content="UtoMe: an observation-uncertainty-guided token merging framework for transformer-based weather foundation models. NeurIPS 2026.">
   <style>
-    :root { --fg: #111827; --muted: #6b7280; --line: #e5e7eb; --bg: #ffffff; --accent: #111827; }
-    @media (prefers-color-scheme: dark) { :root { --fg: #f3f4f6; --muted: #9ca3af; --line: #374151; --bg: #0b0f17; --accent: #f3f4f6; } }
+    :root { --green: #00662c; --green-dark: #00401c; --green-mid: #2f8f4e; --lime: #84b641; --tint: #eef6f0; --tint2: #dcefe2;
+            --fg: #1b2420; --muted: #5b6a62; --line: #d5e2d9; --bg: #ffffff; }
     * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
-           background: var(--bg); color: var(--fg); padding: 32px 16px;
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--fg); line-height: 1.65;
            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    main { max-width: 720px; text-align: center; }
-    h1 { font-size: clamp(2.4rem, 7vw, 3.6rem); margin: 0 0 12px; letter-spacing: -0.02em; }
-    h2 { font-size: clamp(1.1rem, 3vw, 1.4rem); font-weight: 500; margin: 0 0 24px; color: var(--muted); line-height: 1.4; }
-    .authors { font-size: 1.05rem; line-height: 1.7; margin: 0 0 6px; }
-    .affil { font-size: 0.95rem; color: var(--muted); line-height: 1.6; margin: 0 0 4px; }
-    .note { font-size: 0.85rem; color: var(--muted); margin: 0 0 32px; }
-    sup { font-size: 0.7em; }
-    .status { display: inline-flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 32px; }
-    .pill { border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; font-size: 0.95rem; }
-    a.button { display: inline-block; border: 1px solid var(--accent); color: var(--fg); text-decoration: none;
-               border-radius: 8px; padding: 10px 18px; font-weight: 500; }
-    a.button:hover { background: var(--accent); color: var(--bg); }
+    a { color: var(--green); }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+    nav { background: var(--green-dark); position: sticky; top: 0; z-index: 10; }
+    nav .wrap { display: flex; align-items: center; gap: 22px; height: 52px; overflow-x: auto; white-space: nowrap; }
+    nav .brand { color: #fff; font-weight: 700; letter-spacing: 0.02em; text-decoration: none; margin-right: auto; }
+    nav a.link { color: #d6ead9; text-decoration: none; font-size: 0.92rem; }
+    nav a.link:hover { color: #fff; }
+    header { background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 55%, var(--green-mid) 100%); color: #fff;
+             padding: 64px 0 56px; border-bottom: 6px solid var(--lime); text-align: center; }
+    .venue { display: inline-block; background: var(--lime); color: #12300f; font-weight: 700; font-size: 0.8rem;
+             letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 12px; border-radius: 3px; margin-bottom: 22px; }
+    h1 { font-size: clamp(2.6rem, 8vw, 4.2rem); margin: 0 0 10px; letter-spacing: -0.02em; line-height: 1.05; }
+    .subtitle { font-size: clamp(1.1rem, 3vw, 1.5rem); font-weight: 400; margin: 0 auto 28px; max-width: 760px; color: #e6f3e9; line-height: 1.35; }
+    .authors { font-size: 1.08rem; margin: 0 0 8px; line-height: 1.8; }
+    .affil { font-size: 0.98rem; color: #d6ead9; margin: 0 0 6px; line-height: 1.7; }
+    .note { font-size: 0.86rem; color: #c3dcc8; margin: 0 0 30px; }
+    sup { font-size: 0.68em; }
+    .buttons { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+    .btn { display: inline-block; padding: 10px 20px; border-radius: 4px; font-weight: 600; text-decoration: none; font-size: 0.97rem; }
+    .btn.solid { background: #fff; color: var(--green-dark); }
+    .btn.solid:hover { background: var(--tint2); }
+    .btn.ghost { border: 1px solid rgba(255,255,255,0.55); color: #fff; }
+    section { padding: 52px 0; }
+    section.alt { background: var(--tint); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    h2 { font-size: 1.7rem; margin: 0 0 20px; color: var(--green-dark); padding-left: 14px; border-left: 5px solid var(--lime); line-height: 1.2; }
+    p { margin: 0 0 16px; }
+    .callout { background: #fff; border: 1px solid var(--line); border-left: 5px solid var(--green); border-radius: 4px; padding: 16px 20px; margin: 0; }
+    figure { margin: 24px 0 0; }
+    figure img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 4px; background: #fff; }
+    figcaption { font-size: 0.92rem; color: var(--muted); margin-top: 10px; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin: 0 0 28px; }
+    .stat { background: #fff; border: 1px solid var(--line); border-top: 4px solid var(--green); border-radius: 4px; padding: 18px 20px; }
+    .stat .num { font-size: 1.9rem; font-weight: 700; color: var(--green); line-height: 1.1; }
+    .stat .lbl { font-size: 0.9rem; color: var(--muted); margin-top: 6px; }
+    .variants { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 24px; }
+    .variant { background: #fff; border: 1px solid var(--line); border-radius: 4px; padding: 18px 20px; }
+    .variant h3 { margin: 0 0 6px; color: var(--green); font-size: 1.12rem; }
+    .variant p { margin: 0; font-size: 0.95rem; color: var(--muted); }
+    .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; background: #fff; }
+    table { border-collapse: collapse; width: 100%; min-width: 820px; font-size: 0.88rem; font-variant-numeric: tabular-nums; }
+    th { background: var(--green); color: #fff; text-align: center; padding: 9px 8px; font-weight: 600; white-space: nowrap; }
+    th:first-child, td.m { text-align: left; }
+    td { padding: 7px 8px; text-align: center; border-top: 1px solid var(--line); white-space: nowrap; }
+    td.m { font-weight: 600; }
+    tr.grp td { background: var(--tint2); color: var(--green-dark); font-style: italic; font-weight: 600; text-align: left; }
+    tr.ref td { color: var(--muted); }
+    tr.ours td { background: #f7fbf8; }
+    .sd { font-size: 0.78em; color: var(--muted); font-weight: 400; margin-left: 1px; }
+    .tnote { font-size: 0.88rem; color: var(--muted); margin-top: 10px; }
+    pre { background: #0f2217; color: #dff1e3; padding: 18px 20px; border-radius: 4px; overflow-x: auto; font-size: 0.88rem; line-height: 1.5; margin: 0; }
+    footer { background: var(--green-dark); color: #c3dcc8; padding: 26px 0; font-size: 0.88rem; text-align: center; }
+    footer a { color: #fff; }
   </style>
 </head>
 <body>
-  <main>
+  <nav><div class="wrap">
+    <a class="brand" href="#top">UtoMe</a>
+    <a class="link" href="#abstract">Abstract</a>
+    <a class="link" href="#method">Method</a>
+    <a class="link" href="#results">Results</a>
+    <a class="link" href="#cases">Case studies</a>
+    <a class="link" href="#ack">Acknowledgements</a>
+    <a class="link" href="https://github.com/ornl-utome/UtoMe">GitHub</a>
+  </div></nav>
+
+  <header id="top"><div class="wrap">
+    <div class="venue">NeurIPS 2026</div>
     <h1>UtoMe</h1>
-    <h2>Observation-Uncertainty-Guided Token Merging for Weather Foundation Models</h2>
-    <p class="authors">Yunbei Zhang<sup>1,*,&dagger;</sup>, Janet Wang<sup>1,*</sup>, Xi Xiao<sup>2</sup>, Jihun Hamm<sup>1</sup>, Xiao Wang<sup>3,&dagger;</sup></p>
-    <p class="affil"><sup>1</sup>Tulane &nbsp; <sup>2</sup>UAB &nbsp; <sup>3</sup>ORNL</p>
-    <p class="note"><sup>*</sup>Equal contribution &nbsp; <sup>&dagger;</sup>Corresponding authors</p>
-    <div class="status">
-      <span class="pill">Paper: coming soon</span>
-      <span class="pill">Code: coming soon</span>
+    <p class="subtitle">Observation-Uncertainty-Guided Token Merging for Weather Foundation Models</p>
+    <p class="authors">Yunbei Zhang<sup>1,*,&dagger;</sup> &nbsp; Janet Wang<sup>1,*</sup> &nbsp; Xi Xiao<sup>2</sup> &nbsp; Jihun Hamm<sup>1</sup> &nbsp; Xiao Wang<sup>3,&dagger;</sup></p>
+    <p class="affil"><sup>1</sup>Tulane University &nbsp;&nbsp; <sup>2</sup>University of Alabama at Birmingham &nbsp;&nbsp; <sup>3</sup>Oak Ridge National Laboratory</p>
+    <p class="note"><sup>*</sup>Equal contribution &nbsp;&nbsp; <sup>&dagger;</sup>Corresponding authors</p>
+    <div class="buttons">
+      <span class="btn ghost">Paper (coming soon)</span>
+      <a class="btn solid" href="https://github.com/ornl-utome/UtoMe">Code (coming soon)</a>
     </div>
-    <div><a class="button" href="https://github.com/ornl-utome/UtoMe">GitHub</a></div>
-  </main>
+  </div></header>
+
+  <section><div class="wrap">
+    <p class="callout">This project was carried out during <b>Yunbei Zhang</b>'s internship at <b>Oak Ridge National Laboratory (ORNL)</b>.</p>
+  </div></section>
+
+  <section class="alt" id="abstract"><div class="wrap">
+    <h2>Abstract</h2>
+    <p style="margin:0">Weather transformers process dense reanalysis fields whose reliability varies across variables, locations, and weather regimes. Token merging can reduce computation, but feature similarity alone does not account for this heterogeneous input uncertainty. We introduce <b>UtoMe</b>, an observation-uncertainty-guided token merging framework that combines dynamics saliency with ensemble data assimilation spread as a relative input-reliability proxy. The resulting importance score protects selected tokens as anchors and calibrates bipartite matching between the remaining tokens. Three variants use external uncertainty at both training and inference, during training only, or neither stage. In ERA5 72-hour forecasting at two spatial resolutions, UtoMe improves Overall error over train-time ToMe at matched token budgets. At 1.40625° and 50% token reduction, UtoMe-E lowers Overall error from 67.32 to 53.00 at the same 0.55× encoder FLOPs. Small reductions remain close to the full-token baseline; larger reductions incur measurable accuracy losses. Component ablations and spatial uncertainty controls support combining dynamics with aligned uncertainty when allocating a weather transformer's token budget.</p>
+  </div></section>
+
+  <section id="method"><div class="wrap">
+    <h2>Method</h2>
+    <p>UtoMe uses observation uncertainty to guide training-time token merging for transformer-based weather forecasting. It turns weather-state saliency and low observation uncertainty into a patch-level token score, then uses that score to protect forecast-sensitive anchors and merge lower-importance redundant tokens.</p>
+    <figure>
+      <img src="assets/overview.png" alt="UtoMe overview: inputs, allocation, and forecast stages, with the three variants UtoMe-E, UtoMe-P, and UtoMe-S" width="1568" height="784">
+      <figcaption><b>UtoMe overview.</b> Dynamics saliency <i>d</i> and aligned ensemble-data-assimilation spread <i>q</i> form a joint importance score <i>s</i> = <i>d</i> &minus; <i>&beta;q</i>. High-scoring tokens are protected as anchors, and the score calibrates bipartite matching among the remaining tokens.</figcaption>
+    </figure>
+    <div class="variants">
+      <div class="variant"><h3>UtoMe-E</h3><p>Uses external uncertainty at both training and inference.</p></div>
+      <div class="variant"><h3>UtoMe-P</h3><p>Uses external uncertainty during training only, through a learned importance predictor that needs no uncertainty fields at deployment.</p></div>
+      <div class="variant"><h3>UtoMe-S</h3><p>Uses no external uncertainty; it learns from a local spatial-inconsistency proxy.</p></div>
+    </div>
+  </div></section>
+
+  <section class="alt" id="results"><div class="wrap">
+    <h2>Results</h2>
+    <div class="stats">
+      <div class="stat"><div class="num">67.32 &rarr; 53.00</div><div class="lbl">Overall error, ToMe vs. UtoMe-E, at 1.40625° and 50% token reduction</div></div>
+      <div class="stat"><div class="num">0.55×</div><div class="lbl">Encoder FLOPs for both methods at that budget</div></div>
+      <div class="stat"><div class="num">72 h</div><div class="lbl">ERA5 forecasting lead time, evaluated at two spatial resolutions</div></div>
+    </div>
+    <div class="tablewrap">
+<table>
+<thead><tr><th>Method</th><th>Overall ↓</th><th>ACC ↑</th><th>Z500 ↓</th><th>T850 ↓</th><th>T2m ↓</th><th>U10 ↓</th><th>V10 ↓</th><th>Compute ↓</th></tr></thead>
+<tbody>
+<tr class='ref'><td class='m'>No merging</td><td>32.41<span class='sd'>±0.28</span></td><td>0.964<span class='sd'>±0.004</span></td><td>156.76<span class='sd'>±1.34</span></td><td>1.299<span class='sd'>±0.007</span></td><td>1.269<span class='sd'>±0.006</span></td><td>1.339<span class='sd'>±0.008</span></td><td>1.360<span class='sd'>±0.009</span></td><td>1.00×</td></tr>
+<tr class='grp'><td colspan='9'>25% token reduction</td></tr>
+<tr><td class='m'>ToMe</td><td>42.45<span class='sd'>±0.24</span></td><td>0.949<span class='sd'>±0.003</span></td><td>206.02<span class='sd'>±1.17</span></td><td>1.452<span class='sd'>±0.006</span></td><td>1.483<span class='sd'>±0.007</span></td><td>1.572<span class='sd'>±0.008</span></td><td>1.724<span class='sd'>±0.009</span></td><td>0.86×</td></tr>
+<tr class='ours'><td class='m'>UtoMe-E</td><td><b>39.59</b><span class='sd'>±0.21</span></td><td><b>0.952</b><span class='sd'>±0.003</span></td><td><b>191.93</b><span class='sd'>±1.05</span></td><td><b>1.413</b><span class='sd'>±0.005</span></td><td><b>1.454</b><span class='sd'>±0.006</span></td><td><b>1.527</b><span class='sd'>±0.007</span></td><td><b>1.645</b><span class='sd'>±0.008</span></td><td>0.86×</td></tr>
+<tr class='ours'><td class='m'>UtoMe-P</td><td><u>39.60</u><span class='sd'>±0.01</span></td><td><b>0.952</b><span class='sd'>±0.000</span></td><td><u>191.98</u><span class='sd'>±0.03</span></td><td>1.425<span class='sd'>±0.001</span></td><td>1.459<span class='sd'>±0.000</span></td><td><u>1.530</u><span class='sd'>±0.000</span></td><td><u>1.648</u><span class='sd'>±0.001</span></td><td>0.87×</td></tr>
+<tr class='ours'><td class='m'>UtoMe-S</td><td>39.84<span class='sd'>±0.27</span></td><td><u>0.951</u><span class='sd'>±0.004</span></td><td>193.14<span class='sd'>±1.31</span></td><td><u>1.416</u><span class='sd'>±0.007</span></td><td><u>1.458</u><span class='sd'>±0.008</span></td><td>1.533<span class='sd'>±0.009</span></td><td>1.656<span class='sd'>±0.010</span></td><td>0.87×</td></tr>
+<tr class='grp'><td colspan='9'>50% token reduction</td></tr>
+<tr><td class='m'>ToMe</td><td>67.32<span class='sd'>±0.43</span></td><td>0.905<span class='sd'>±0.005</span></td><td>328.21<span class='sd'>±2.11</span></td><td>1.846<span class='sd'>±0.011</span></td><td>2.056<span class='sd'>±0.015</span></td><td>2.136<span class='sd'>±0.014</span></td><td><u>2.347</u><span class='sd'>±0.018</span></td><td>0.55×</td></tr>
+<tr class='ours'><td class='m'>UtoMe-E</td><td><b>53.00</b><span class='sd'>±0.36</span></td><td><b>0.913</b><span class='sd'>±0.004</span></td><td><b>256.72</b><span class='sd'>±1.76</span></td><td><u>1.759</u><span class='sd'>±0.009</span></td><td><u>2.051</u><span class='sd'>±0.012</span></td><td><u>2.038</u><span class='sd'>±0.013</span></td><td>2.433<span class='sd'>±0.015</span></td><td>0.55×</td></tr>
+<tr class='ours'><td class='m'>UtoMe-P</td><td><u>53.14</u><span class='sd'>±0.01</span></td><td>0.907<span class='sd'>±0.000</span></td><td><u>257.37</u><span class='sd'>±0.05</span></td><td>1.762<span class='sd'>±0.001</span></td><td>2.056<span class='sd'>±0.001</span></td><td>2.045<span class='sd'>±0.001</span></td><td>2.444<span class='sd'>±0.001</span></td><td>0.57×</td></tr>
+<tr class='ours'><td class='m'>UtoMe-S</td><td>57.01<span class='sd'>±0.04</span></td><td><u>0.908</u><span class='sd'>±0.000</span></td><td>276.99<span class='sd'>±0.18</span></td><td><b>1.752</b><span class='sd'>±0.001</span></td><td><b>1.968</b><span class='sd'>±0.004</span></td><td><b>2.009</b><span class='sd'>±0.002</span></td><td><b>2.335</b><span class='sd'>±0.002</span></td><td>0.57×</td></tr>
+</tbody>
+</table>
+    </div>
+    <p class="tnote"><b>Main results on 1.40625° ERA5 72-hour forecasting.</b> Values are mean ± standard deviation over three seeds. Lower is better for Overall and per-variable wRMSE; higher is better for ACC. Compute is the encoder FLOPs ratio relative to no merging. Bold and underlined values are best and second-best within each budget.</p>
+  </div></section>
+
+  <section id="cases"><div class="wrap">
+    <h2>Case studies</h2>
+    <figure style="margin-top:0">
+      <img src="assets/pipeline_5p625.png" alt="5.625 degree case summary with six panels from weather state to anchors and merge candidates" width="1218" height="980">
+      <figcaption><b>5.625° case summary.</b> The complete merge-decision pipeline: weather state, observation uncertainty, dynamics saliency, importance score, patch-level token score, and the final anchor or merge-candidate overlay.</figcaption>
+    </figure>
+    <figure style="margin-top:36px">
+      <img src="assets/case_1p406.png" alt="1.40625 degree case study: Z500 input, observation uncertainty, importance score, and patch-level token score" width="1456" height="824">
+      <figcaption><b>1.40625° high-resolution case study.</b> The observation-uncertainty field contains coherent bands and high-spread structures. After saliency combination and patch aggregation, these structures produce a heterogeneous token score for uncertainty-guided merging.</figcaption>
+    </figure>
+  </div></section>
+
+  <section class="alt" id="ack"><div class="wrap">
+    <h2>Acknowledgements</h2>
+    <p style="margin:0">This research was supported by ORNL's AI Initiative, sponsored by the Director's Research and Development Program at ORNL. Computing time was provided through the Oak Ridge Leadership Computing Facility. The manuscript was authored by UT-Battelle, LLC, under contract DE-AC05-00OR22725 with the US Department of Energy (DOE).</p>
+  </div></section>
+
+  <section id="cite"><div class="wrap">
+    <h2>Citation</h2>
+<pre>@inproceedings{zhang2026utome,
+  title     = {UtoMe: Observation-Uncertainty-Guided Token Merging for Weather Foundation Models},
+  author    = {Zhang, Yunbei and Wang, Janet and Xiao, Xi and Hamm, Jihun and Wang, Xiao},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2026}
+}</pre>
+  </div></section>
+
+  <footer><div class="wrap">UtoMe &middot; <a href="https://github.com/ornl-utome/UtoMe">github.com/ornl-utome/UtoMe</a></div></footer>
 </body>
 </html>
