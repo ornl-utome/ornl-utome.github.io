@@ -42,10 +42,6 @@
     figure { margin: 24px 0 0; }
     figure img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 4px; background: #fff; }
     figcaption { font-size: 0.92rem; color: var(--muted); margin-top: 10px; }
-    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin: 0 0 28px; }
-    .stat { background: #fff; border: 1px solid var(--line); border-top: 4px solid var(--green); border-radius: 4px; padding: 18px 20px; }
-    .stat .num { font-size: 1.9rem; font-weight: 700; color: var(--green); line-height: 1.1; }
-    .stat .lbl { font-size: 0.9rem; color: var(--muted); margin-top: 6px; }
     .variants { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 24px; }
     .variant { background: #fff; border: 1px solid var(--line); border-radius: 4px; padding: 18px 20px; }
     .variant h3 { margin: 0 0 6px; color: var(--green); font-size: 1.12rem; }
@@ -85,7 +81,7 @@
     <p class="note"><sup>*</sup>Equal contribution &nbsp;&nbsp; <sup>&dagger;</sup>Corresponding authors</p>
     <p class="note">Emails: <a style="color:inherit" href="mailto:yzhang111@tulane.edu">yzhang111@tulane.edu</a> &nbsp; <a style="color:inherit" href="mailto:wangx2@ornl.gov">wangx2@ornl.gov</a></p>
     <div class="buttons">
-      <a class="btn ghost" href="assets/UtoMe.pdf">Paper (PDF)</a>
+      <a class="btn ghost" href="assets/UtoMe.pdf">Paper</a>
       <a class="btn solid" href="https://github.com/ornl-utome/UtoMe">Code</a>
     </div>
   </div></header>
@@ -115,11 +111,6 @@
 
   <section class="alt" id="results"><div class="wrap">
     <h2>Results</h2>
-    <div class="stats">
-      <div class="stat"><div class="num">67.32 &rarr; 53.00</div><div class="lbl">Overall error, ToMe vs. UtoMe-E, at 1.40625° and 50% token reduction</div></div>
-      <div class="stat"><div class="num">0.55×</div><div class="lbl">Encoder FLOPs for both methods at that budget</div></div>
-      <div class="stat"><div class="num">72 h</div><div class="lbl">ERA5 forecasting lead time, evaluated at two spatial resolutions</div></div>
-    </div>
     <div class="tablewrap">
 <table>
 <thead><tr><th>Method</th><th>Overall ↓</th><th>ACC ↑</th><th>Z500 ↓</th><th>T850 ↓</th><th>T2m ↓</th><th>U10 ↓</th><th>V10 ↓</th><th>Compute ↓</th></tr></thead>
