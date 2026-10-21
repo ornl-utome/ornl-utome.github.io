@@ -5,74 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>UtoMe: Observation-Uncertainty-Guided Token Merging for Weather Foundation Models</title>
   <meta name="description" content="UtoMe: an observation-uncertainty-guided token merging framework for transformer-based weather foundation models. NeurIPS 2026.">
-  <style>
-    :root { --green: #00662c; --green-dark: #00401c; --green-mid: #2f8f4e; --lime: #84b641; --tint: #eef6f0; --tint2: #dcefe2;
-            --fg: #1b2420; --muted: #5b6a62; --line: #d5e2d9; --bg: #ffffff; }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body { margin: 0; background: var(--bg); color: var(--fg); line-height: 1.65;
-           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    a { color: var(--green); }
-    .wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
-    nav { background: var(--green-dark); position: sticky; top: 0; z-index: 10; }
-    nav .wrap { display: flex; align-items: center; gap: 22px; height: 52px; overflow-x: auto; white-space: nowrap; }
-    nav .brand { color: #fff; font-weight: 700; letter-spacing: 0.02em; text-decoration: none; margin-right: auto; }
-    nav a.link { color: #d6ead9; text-decoration: none; font-size: 0.92rem; }
-    nav a.link:hover { color: #fff; }
-    header { background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 55%, var(--green-mid) 100%); color: #fff;
-             padding: 64px 0 56px; border-bottom: 6px solid var(--lime); text-align: center; }
-    .venue { display: inline-block; background: var(--lime); color: #12300f; font-weight: 700; font-size: 0.8rem;
-             letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 12px; border-radius: 3px; margin-bottom: 22px; }
-    h1 { font-size: clamp(2.6rem, 8vw, 4.2rem); margin: 0 0 10px; letter-spacing: -0.02em; line-height: 1.05; }
-    .subtitle { font-size: clamp(1.1rem, 3vw, 1.5rem); font-weight: 400; margin: 0 auto 28px; max-width: 760px; color: #e6f3e9; line-height: 1.35; }
-    .authors { font-size: 1.08rem; margin: 0 0 8px; line-height: 1.8; }
-    .affil { font-size: 0.98rem; color: #d6ead9; margin: 0 0 6px; line-height: 1.7; }
-    .note { font-size: 0.86rem; color: #c3dcc8; margin: 0 0 30px; }
-    sup { font-size: 0.68em; }
-    .buttons { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
-    .btn { display: inline-block; padding: 10px 20px; border-radius: 4px; font-weight: 600; text-decoration: none; font-size: 0.97rem; }
-    .btn.solid { background: #fff; color: var(--green-dark); }
-    .btn.solid:hover { background: var(--tint2); }
-    .btn.ghost { border: 1px solid rgba(255,255,255,0.55); color: #fff; }
-    section { padding: 52px 0; }
-    section.alt { background: var(--tint); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-    h2 { font-size: 1.7rem; margin: 0 0 20px; color: var(--green-dark); padding-left: 14px; border-left: 5px solid var(--lime); line-height: 1.2; }
-    p { margin: 0 0 16px; }
-    .callout { background: #fff; border: 1px solid var(--line); border-left: 5px solid var(--green); border-radius: 4px; padding: 16px 20px; margin: 0; }
-    figure { margin: 24px 0 0; }
-    figure img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 4px; background: #fff; }
-    figcaption { font-size: 0.92rem; color: var(--muted); margin-top: 10px; }
-    .variants { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 24px; }
-    .variant { background: #fff; border: 1px solid var(--line); border-radius: 4px; padding: 18px 20px; }
-    .variant h3 { margin: 0 0 6px; color: var(--green); font-size: 1.12rem; }
-    .variant p { margin: 0; font-size: 0.95rem; color: var(--muted); }
-    .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; background: #fff; }
-    table { border-collapse: collapse; width: 100%; min-width: 820px; font-size: 0.88rem; font-variant-numeric: tabular-nums; }
-    th { background: var(--green); color: #fff; text-align: center; padding: 9px 8px; font-weight: 600; white-space: nowrap; }
-    th:first-child, td.m { text-align: left; }
-    td { padding: 7px 8px; text-align: center; border-top: 1px solid var(--line); white-space: nowrap; }
-    td.m { font-weight: 600; }
-    tr.grp td { background: var(--tint2); color: var(--green-dark); font-style: italic; font-weight: 600; text-align: left; }
-    tr.ref td { color: var(--muted); }
-    tr.ours td { background: #f7fbf8; }
-    .tnote { font-size: 0.88rem; color: var(--muted); margin-top: 10px; }
-    pre { background: #0f2217; color: #dff1e3; padding: 18px 20px; border-radius: 4px; overflow-x: auto; font-size: 0.88rem; line-height: 1.5; margin: 0; }
-    footer { background: var(--green-dark); color: #c3dcc8; padding: 26px 0; font-size: 0.88rem; text-align: center; }
-    footer a { color: #fff; }
-  </style>
+  <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
-  <nav><div class="wrap">
+  <nav aria-label="Main navigation"><div class="wrap nav-wrap">
     <a class="brand" href="#top">UtoMe</a>
+    <div class="nav-links">
     <a class="link" href="#abstract">Abstract</a>
+    <a class="link" href="#videos">Videos</a>
     <a class="link" href="#method">Method</a>
     <a class="link" href="#results">Results</a>
     <a class="link" href="#cases">Case studies</a>
     <a class="link" href="#ack">Acknowledgements</a>
     <a class="link" href="https://github.com/ornl-utome/UtoMe">GitHub</a>
+    </div>
+    <button id="motion-toggle" type="button" aria-label="Pause animations" title="Pause animations" aria-pressed="false">
+      <svg class="pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+      <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7Z"/></svg>
+    </button>
   </div></nav>
 
-  <header id="top"><div class="wrap">
+  <header id="top">
+    <video class="hero-motion" data-motion autoplay loop muted playsinline preload="auto" width="1440" height="840"
+           poster="assets/video/hero-shuffle-poster.webp" aria-hidden="true" tabindex="-1">
+      <source src="assets/video/hero-shuffle.mp4" type="video/mp4">
+    </video>
+    <div class="hero-shade" aria-hidden="true"></div>
+    <div class="wrap hero-content">
     <div class="venue">NeurIPS 2026</div>
     <h1>UtoMe</h1>
     <p class="subtitle">Observation-Uncertainty-Guided Token Merging for Weather Foundation Models</p>
@@ -86,9 +45,16 @@
     </div>
   </div></header>
 
-  <section><div class="wrap">
-    <p class="callout">This work was done during an internship at <b>Oak Ridge National Laboratory (ORNL)</b>.</p>
-  </div></section>
+
+  <section id="videos" aria-label="Uncertainty demonstrations">
+    <div class="wide-wrap demo-grid">
+      <video id="guidance-video" data-motion autoplay loop muted playsinline preload="metadata" width="960" height="672"
+             poster="assets/video/uncertainty-guidance-poster.webp" aria-label="Dynamics-only control compared with uncertainty-guided UtoMe">
+        <source src="assets/video/uncertainty-guidance.mp4" type="video/mp4">
+        <a href="assets/video/uncertainty-guidance.mp4">Download the uncertainty guidance video.</a>
+      </video>
+    </div>
+  </section>
 
   <section class="alt" id="abstract"><div class="wrap">
     <h2>Abstract</h2>
@@ -98,15 +64,24 @@
   <section id="method"><div class="wrap">
     <h2>Method</h2>
     <p>UtoMe uses observation uncertainty to guide training-time token merging for transformer-based weather forecasting. It turns weather-state saliency and low observation uncertainty into a patch-level token score, then uses that score to protect forecast-sensitive anchors and merge lower-importance redundant tokens.</p>
+  </div>
+  <div class="wide-wrap method-motion">
+    <video id="method-video" class="method-desktop" data-motion autoplay loop muted playsinline preload="metadata" width="1440" height="840"
+           poster="assets/video/method-variants-poster.webp" aria-label="UtoMe-E, UtoMe-P and UtoMe-S: training guidance, importance prediction, protected tokens and merging">
+      <source src="assets/video/method-variants.mp4" type="video/mp4">
+      <a href="assets/video/method-variants.mp4">Download the animated method.</a>
+    </video>
+    <video id="method-mobile-video" class="method-mobile" data-motion autoplay loop muted playsinline preload="metadata" width="800" height="850"
+           poster="assets/video/method-mobile-poster.webp" aria-label="Animated UtoMe-E, UtoMe-P and UtoMe-S methods, shown one at a time">
+      <source src="assets/video/method-mobile.mp4" type="video/mp4">
+      <a href="assets/video/method-mobile.mp4">Download the portrait animated method.</a>
+    </video>
+  </div>
+  <div class="wrap original-method">
     <figure>
-      <img src="assets/overview.png" alt="UtoMe overview: inputs, allocation, and forecast stages, with the three variants UtoMe-E, UtoMe-P, and UtoMe-S" width="2200" height="1508">
+      <img loading="lazy" src="assets/overview.png" alt="UtoMe overview: inputs, allocation, and forecast stages, with the three variants UtoMe-E, UtoMe-P, and UtoMe-S" width="2200" height="1508">
       <figcaption><b>UtoMe overview.</b> Dynamics saliency <i>d</i> and aligned ensemble-data-assimilation spread <i>q</i> form a joint importance score <i>s</i> = <i>d</i> &minus; <i>&beta;q</i>. High-scoring tokens are protected as anchors, and the score calibrates bipartite matching among the remaining tokens.</figcaption>
     </figure>
-    <div class="variants">
-      <div class="variant"><h3>UtoMe-E</h3><p>Uses external uncertainty at both training and inference.</p></div>
-      <div class="variant"><h3>UtoMe-P</h3><p>Uses external uncertainty during training only, through a learned importance predictor that needs no uncertainty fields at deployment.</p></div>
-      <div class="variant"><h3>UtoMe-S</h3><p>Uses no external uncertainty; it learns from a local spatial-inconsistency proxy.</p></div>
-    </div>
   </div></section>
 
   <section class="alt" id="results"><div class="wrap">
@@ -135,17 +110,18 @@
   <section id="cases"><div class="wrap">
     <h2>Case studies</h2>
     <figure style="margin-top:0">
-      <img src="assets/pipeline_5p625.png" alt="5.625 degree case summary with six panels from weather state to anchors and merge candidates" width="1218" height="980">
+      <img loading="lazy" src="assets/pipeline_5p625.png" alt="5.625 degree case summary with six panels from weather state to anchors and merge candidates" width="1218" height="980">
       <figcaption><b>5.625° case summary.</b> The complete merge-decision pipeline: weather state, observation uncertainty, dynamics saliency, importance score, patch-level token score, and the final anchor or merge-candidate overlay.</figcaption>
     </figure>
     <figure style="margin-top:36px">
-      <img src="assets/case_1p406.png" alt="1.40625 degree case study: Z500 input, observation uncertainty, importance score, and patch-level token score" width="1456" height="824">
+      <img loading="lazy" src="assets/case_1p406.png" alt="1.40625 degree case study: Z500 input, observation uncertainty, importance score, and patch-level token score" width="1456" height="824">
       <figcaption><b>1.40625° high-resolution case study.</b> The observation-uncertainty field contains coherent bands and high-spread structures. After saliency combination and patch aggregation, these structures produce a heterogeneous token score for uncertainty-guided merging.</figcaption>
     </figure>
   </div></section>
 
   <section class="alt" id="ack"><div class="wrap">
     <h2>Acknowledgements</h2>
+    <p>This work was done during an internship at <b>Oak Ridge National Laboratory (ORNL)</b>.</p>
     <p style="margin:0">This research was supported by ORNL's AI Initiative, sponsored by the Director's Research and Development Program at ORNL. Computing time was provided through the Oak Ridge Leadership Computing Facility. The manuscript was authored by UT-Battelle, LLC, under contract DE-AC05-00OR22725 with the US Department of Energy (DOE).</p>
   </div></section>
 
@@ -160,5 +136,6 @@
   </div></section>
 
   <footer><div class="wrap">UtoMe &middot; <a href="https://github.com/ornl-utome/UtoMe/blob/main/LICENSE">Code license: CC BY-NC 4.0</a> &middot; <a href="https://github.com/ornl-utome/UtoMe">github.com/ornl-utome/UtoMe</a></div></footer>
+  <script src="assets/demos.js" defer></script>
 </body>
 </html>
